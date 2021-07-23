@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewBag.Title = "Cliente";
+    ViewBag.Description = "Crear nuevo cliente";
+}
+
+<script src="~/Content/js/plugins/jquery/jquery-3.3.1.min.js"></script>
+<div class="row">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="box box-tools">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-align-justify"></i>&nbsp;&nbsp;Creación de Cliente</h3>
+
+                    <div class="box-tools pull-right">
+                        <div class="box-tools pull-right">
+                            <ul id="test"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body animated fadeIn" style="" id="LstCotizacion">
+                    <form id="frmNuevo">
+                        Cedula
+                        <input type="text" name="Cedula" class="form-control" id="txtCedula" placeholder="Cedula" />
+                        Nombre
+                        <input type="text" name="Nombre" class="form-control" id="txtNombre" placeholder="Nombre" />
+                        Apellido
+                        <input type="text" name="Apellido" class="form-control" id="txtApellido" placeholder="Apellido" />
+                        Dirección
+                        <input type="text" name="Direccion" class="form-control" id="txtDireccion" placeholder="Direccion" />
+                        Fecha de Nacimiento
+                        <input type="date" name="FechaNacimiento" class="form-control" id="txtFecha" placeholder="Fecha" />
+                        <input type="text" name="Estado" class="form-control" id="txtEstado" value="1" style="display:none" />
+                    </form>
+                    <br />
+
+                    <div id="dvNuevo" class="" style="padding-bottom: 5px">
+                        <a id="btnGuardar" class="btn btn-linkedin">
+                            <i class="fa fa-plus" style="padding-right: 3px"></i> Guardar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#btnGuardar").click(function () {
+        var data = $('#frmNuevo').serializeObject();
+        //console.log(cliente);
+        var url = "http://localhost:25764/Api/Test/GrabarCliente";
+        
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (data) {
+                if (data == "ok") {
+                    window.location.href = "@Url.Action("Index", "Cliente")";
+                }
+                else {
+                    alert("Error: " + data);
+                }
+            }
+        });
+    });
+
+
+</script>
+

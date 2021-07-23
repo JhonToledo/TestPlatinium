@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = "Cita";
+    ViewBag.Description = "Nuevo";
+}
+
+<script src="~/Content/js/plugins/jquery/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="~/Content/datetimepicker/jquery.datetimepicker.full.min.js"></script>
+<script src="~/Content/select2/select2.min.js"></script>
+<link href="~/Content/datetimepicker/jquery.datetimepicker.min.css" rel="stylesheet" />
+<link href="~/Content/select2/select2.min.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="box box-tools">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-align-justify"></i>&nbsp;&nbsp;Citas</h3>
+
+                    <div class="box-tools pull-right">
+                        <div class="box-tools pull-right">
+                            <ul id="test"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body animated fadeIn" style="" id="">
+                    <form id="frmNuevo">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                Cliente
+                                <select class="form-control" name="IDCliente" id="cmbCliente"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                Fecha
+                                <input type="date" name="Fecha" class="form-control" id="datetimepicker1">
+                            </div>
+                            <div class="col-md-6">
+                                Hora
+                                <input type="text" name="Hora" class="form-control" id="datetimepicker2">
+                            </div>
+                        </div>
+                        <input type="text" name="Estado" class="form-control" id="txtEstado" value="1" style="display:none" />
+                    </form>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div id="dvNuevo" class="" style="padding-bottom: 5px">
+                                <a id="btnGuardar" class="btn btn-linkedin" style="margin-top: 15px">
+                                    <i class="fa fa-plus" style="padding-right: 3px"></i> Guardar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    ////$("#cmbCliente").select2({
+    ////    theme: "bootstrap"
+    ////});
+
+    jQuery.datetimepicker.setLocale('es');
+    jQuery('#datetimepicker2').datetimepicker({
+        datepicker: false,
+        format: 'H:i'
+    });
+
+    ////////jQuery('#datetimepicker1').datetimepicker({
+    ////////    i18n: {
+    ////////        de: {
+    ////////            months: [
+    ////////                'Enero', 'Febrero', 'Marzo', 'Abril',
+    ////////                'Mayo', 'Junio', 'Julio', 'Agosto',
+    ////////                'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+    ////////            ],
+    ////////            dayOfWeek: [
+    ////////                "Dom.", "Lun", "Mar", "Mie",
+    ////////                "Jue", "Vie", "Sab",
+    ////////            ]
+    ////////        }
+    ////////    },
+    ////////    minDate: '-1970/01/01',//yesterday is minimum date(for today use 0 or -1970/01/01)
+    ////////    maxDate: '+1970/04/02',//tomorrow is maximum date calendar
+    ////////    timepicker: false,
+    ////////    format: 'd/m/Y'
+    ////////});
+
+    $(document).ready(function () {
+
+        var url = "http://localhost:25764/Api/Test/ListadoCliente";
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    $("#cmbCliente").append($("<option />").val(item.IDCliente).text(item.Nombre + ' ' + item.Apellido));
+                });
+            }
+        });
+        
+
+        $("#btnGuardar").click(function () {
+            var data = $('#frmNuevo').serialize();
+            var url = "http://localhost:25764/Api/Test/GrabarCita";
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: data,
+                success: function (data) {
+                    if (data == "ok") {
+                        window.location.href = "@Url.Action("Index", "Cita")";
+                    }
+                    else {
+                        alert("Error: " + data);
+                    }
+                }
+            });
+        });
+
+    });
+
+
+
+</script>
+
+

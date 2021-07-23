@@ -1,0 +1,204 @@
+﻿@{
+    ViewBag.Title = "Cita";
+    ViewBag.Description = "Nuevo";
+}
+
+@*<script src="~/Content/js/plugins/jquery/jquery-3.3.1.min.js"></script>*@
+<style>
+    .cf:before,
+    .cf:after {
+        content: " ";
+        /* 1 */
+        display: table;
+        /* 2 */
+    }
+
+    .cf:after {
+        clear: both;
+    }
+
+    #tags {
+        width: 100%;
+        padding: 10px;
+        float: none;
+        clear: both;
+    }
+
+    .tag {
+        float: left;
+        margin: 5px;
+        padding: 5px;
+        background: #efefef;
+        cursor: pointer;
+        border: 1px solid #e0e0e0;
+    }
+
+        .tag::after {
+            content: '\2612';
+            float: right;
+            display: block;
+            margin: -2px 0 0 10px;
+        }
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://www.jqueryscript.net/demo/jQuery-Plugin-For-Custom-Tags-Input-Select-Box-selectize-js/selectize.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+<link href="https://www.jqueryscript.net/demo/jQuery-Plugin-For-Custom-Tags-Input-Select-Box-selectize-js/selectize.css" rel="stylesheet" />
+<div class="row">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="box box-tools">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-align-justify"></i>&nbsp;&nbsp;Citas</h3>
+
+                    <div class="box-tools pull-right">
+                        <div class="box-tools pull-right">
+                            <ul id="test"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body animated fadeIn" style="" id="">
+                    <form id="frmNuevo">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                Cliente
+                                <select class="form-control" name="IDCliente" id="cmbCliente"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                Citas
+                                <select class="form-control" name="IDClienteCita" id="cmbCita"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                Servicios
+                                <div id="tags" class="cf"></div>
+                                <input type="text" id="tagname" class="form-control" />
+                                <input type="text" name="Descripcion" class="form-control" id="txtDescripcion" style="display:none" />
+
+                            </div>
+                        </div>
+                        <input type="text" name="Estado" class="form-control" id="txtEstado" value="1" style="display:none" />
+
+
+
+                    </form>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div id="dvNuevo" class="" style="padding-bottom: 5px">
+                                <a id="btnGuardar" class="btn btn-linkedin" style="margin-top: 15px">
+                                    <i class="fa fa-plus" style="padding-right: 3px"></i> Guardar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    $(document).ready(function () {
+
+        var url = "http://localhost:25764/Api/Test/ListadoCliente";
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                $.each(data, function (i, item) {
+                    $("#cmbCliente").append($("<option />").val(item.IDCliente).text(item.Nombre + ' ' + item.Apellido));
+                });
+            }
+        });
+
+        $("#cmbCliente").trigger("change");
+
+        $("#cmbCliente").change(function () {
+            let cliente = $("#cmbCliente").val();
+            console.log(cliente);
+            $('#cmbCita').empty();
+            $('#cmbCita').val('');
+            $('#cmbCita').trigger("change");
+
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:25764/Api/Test/ListadoCitaById",
+                dataType: "json",
+                data: { idcliente: cliente },
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    $.each(data, function (i, item) {
+                        $("#cmbCita").append($("<option />").val(item.IDClienteCita).text(moment(item.Fecha).format('DD/MM/YYYY') + ' - ' + item.Hora));
+                    });
+                }
+            });
+        });
+
+        $("#btnGuardar").click(function () {
+            var results = $('div#tags').children('div.tag').map(function () {
+                return $(this).text();
+            }).get().join();
+            $("#txtDescripcion").val(results);
+
+            var data = $('#frmNuevo').serialize();
+            var url = "http://localhost:25764/Api/Test/GrabarAtencion";
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: data,
+                success: function (data) {
+                    if (data == "ok") {
+                        window.location.href = "@Url.Action("Index", "Atencion")";
+                    }
+                    else {
+                        alert("Error: " + data);
+                    }
+                }
+            });
+        });
+
+
+    });
+
+
+    $('#tagname').keypress(function (e) {
+        var $t = $(e.target),
+            tmap = $t.data('tmap') || {},
+            n = e.keyCode || e.which,
+            val;
+        $t.data('tmap', tmap);
+
+        if (n === 13) {
+            val = $.trim($t.val());
+            if (val !== '' && tmap[val] === undefined) {
+                tmap[val] = 1;
+                $('#tags').append($('<div>').addClass('tag').html(val));
+                $t.val('');
+            }
+        }
+    });
+
+    $('#tags').on('click', '.tag', function (e) {
+        var $t = $(e.target);
+        txt = $.trim($t.text());
+        $t.remove();
+        delete $('#tagname').data('tmap')[txt];
+    });
+
+</script>
+
+
+

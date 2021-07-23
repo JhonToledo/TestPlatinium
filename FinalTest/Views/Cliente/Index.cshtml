@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "Cliente";
+    ViewBag.Description = "Listado";
+}
+<script src="~/Content/js/plugins/jquery/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+
+<style>
+    th, td {
+        text-align: center;
+    }
+</style>
+
+
+<div class="row">
+
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="box box-tools">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-align-justify"></i>&nbsp;&nbsp;Listado</h3>
+
+                    <div class="box-tools pull-right">
+                        <div class="box-tools pull-right">
+                            <ul id="test"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body animated fadeIn" style="">
+                    <div id="dvNuevo" class="" style="padding-bottom: 5px">
+                        <a id="btnNuevo" class="btn btn-linkedin" href="@Url.Action("Nuevo", "Cliente")">
+                            <i class="fa fa-plus" style="padding-right: 3px"></i> Nuevo
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tbCliente" class="table display compact stripe nowrap fadeIn animated" width="100%">
+                            <thead>
+                                <tr>
+                                    <th style="display:none">Codigo</th>
+                                    <th>Cedula</th>
+                                    <th>Nombre</th>
+                                    <th>Apellido</th>
+                                    <th>FechaNacimiento</th>
+                                    <th>Estado</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbClienteDetalle"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        var url = "http://localhost:25764/Api/Test/ListadoCliente";
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                let detalle = $("#tbClienteDetalle");
+                detalle.html("");
+                $.each(data, function (i, item) {
+                    let rw = "<tr><td style='display:none'>" + item.IDCliente + "</td>"
+                    rw += "<td>" + item.Cedula + "</td>"
+                    rw += "<td>" + item.Nombre + "</td>"
+                    rw += "<td>" + item.Apellido + "</td>"
+                    rw += "<td>" + moment(item.FechaNacimiento).format('DD/MM/YYYY') + "</td>"
+                    rw += "<td>" + item.Estado + "</td>"
+                    rw += '<td><a id="btnEliminar" class="btn bg-red btn-xs eliminar" data-toggle="tooltip" title="Eliminar">' +
+                        '<i class="fa fa-remove"></i>' +
+                        '</a></td></tr>';
+                    detalle.append(rw);
+                });
+            }
+        });
+
+        $("#tbCliente").on("click", ".eliminar", function (e) {
+            e.preventDefault();
+            var id = $(this).closest("tr").find('td:eq(0)').text();
+            console.log(id);
+            Swal.fire({
+                title: 'Esta seguro que dese eliminar este registro?',
+                text: "Tambien se eliminara sus dependencias",
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.value) {
+                    var url = "http://localhost:25764/Api/Test/EliminarCliente?idcliente=" + id;
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == "ok") {
+                                window.location.href = "@Url.Action("Index", "Cliente")";
+                            }
+                            else {
+                                alert("Error: " + data);
+                            }   
+                        }
+                    });
+                }
+            });
+
+        });
+    });
+</script>

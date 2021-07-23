@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewBag.Title = "Citas";
+    ViewBag.Description = "Listado";
+}
+
+
+<script src="~/Content/js/plugins/jquery/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+<style>
+    th, td {
+        text-align: center;
+    }
+</style>
+
+
+<div class="row">
+
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="box box-tools">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-align-justify"></i>&nbsp;&nbsp;Listado</h3>
+
+                    <div class="box-tools pull-right">
+                        <div class="box-tools pull-right">
+                            <ul id="test"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body animated fadeIn" style="">
+                    <div id="dvNuevo" class="" style="padding-bottom: 5px">
+                        <a id="btnNuevo" class="btn btn-linkedin" href="@Url.Action("Nuevo", "Cita")">
+                            <i class="fa fa-plus" style="padding-right: 3px"></i> Nuevo
+                        </a>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tbCita" class="table display compact stripe nowrap fadeIn animated" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Cedula</th>
+                                    <th>Nombre</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbCitaDetalle"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        var url = "http://localhost:25764/Api/Test/ListadoCita";
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                let detalle = $("#tbCitaDetalle");
+                detalle.html("");
+                console.log(data);
+                $.each(data, function (i, item) {
+                    let rw = "<tr><td>" + item.Cedula + "</td>"
+                    rw += "<td>" + item.Nombre + "</td>"
+                    rw += "<td>" + moment(item.Fecha).format('DD/MM/YYYY') + "</td>"
+                    rw += "<td>" + item.Hora + "</td>"
+                    rw += "<td>" + item.Estado + "</td></tr>"
+                    detalle.append(rw);
+                });
+            }
+        });
+    });
+</script>

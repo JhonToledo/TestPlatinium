@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinalTest", "FinalTest\FinalTest.csproj", "{BAC5CBE4-0A31-4733-AC10-7ED1FD45901C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWebApi", "TestWebApi\TestWebApi.csproj", "{E227EC77-6868-47D5-A712-2BA25B0A47C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BAC5CBE4-0A31-4733-AC10-7ED1FD45901C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC5CBE4-0A31-4733-AC10-7ED1FD45901C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC5CBE4-0A31-4733-AC10-7ED1FD45901C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC5CBE4-0A31-4733-AC10-7ED1FD45901C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E227EC77-6868-47D5-A712-2BA25B0A47C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E227EC77-6868-47D5-A712-2BA25B0A47C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E227EC77-6868-47D5-A712-2BA25B0A47C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E227EC77-6868-47D5-A712-2BA25B0A47C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45
+		SolutionGuid = {579E0B4F-0AA1-47AA-A047-5B78AD5EC5E0}
+	EndGlobalSection
+EndGlobal

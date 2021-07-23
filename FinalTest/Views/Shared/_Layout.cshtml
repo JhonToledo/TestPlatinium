@@ -1,0 +1,119 @@
+﻿@using System.Web.Optimization
+@using WebHelpers.Mvc5.Enum
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Title))
+        {
+            @ViewBag.Title@: -
+        }
+        Test
+    </title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    @Styles.Render("~/Bundles/css")
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        @Html.Partial("_Header")
+        @Html.Partial("_Sidebar")
+
+        <div class="content-wrapper">
+            <section class="content-header">
+                <h1>
+                    @ViewBag.Title
+                    <small>@ViewBag.Description</small>
+                </h1>
+            </section>
+
+            <section class="content">
+                @RenderBody()
+            </section>
+        </div>
+
+        @*@Html.Partial("_ControlSidebar")*@
+    </div>
+
+    <script src="@RouteJs.RouteJsHandler.HandlerUrl"></script>
+    <script src="@EnumHandler.HandlerUrl"></script>
+    @Scripts.Render("~/Bundles/js")
+    @RenderSection("ViewSpecificJavascript", required: false)
+    <script>
+
+        (function ($) {
+            $.fn.serializeObject = function () {
+
+                var self = this,
+                    json = {},
+                    push_counters = {},
+                    patterns = {
+                        "validate": /^[a-zA-Z][a-zA-Z0-9_]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/,
+                        "key": /[a-zA-Z0-9_]+|(?=\[\])/g,
+                        "push": /^$/,
+                        "fixed": /^\d+$/,
+                        "named": /^[a-zA-Z0-9_]+$/
+                    };
+
+
+                this.build = function (base, key, value) {
+                    base[key] = value;
+                    return base;
+                };
+
+                this.push_counter = function (key) {
+                    if (push_counters[key] === undefined) {
+                        push_counters[key] = 0;
+                    }
+                    return push_counters[key]++;
+                };
+
+                $.each($(this).serializeArray(), function () {
+
+                    // Skip invalid keys
+                    if (!patterns.validate.test(this.name)) {
+                        return;
+                    }
+
+                    var k,
+                        keys = this.name.match(patterns.key),
+                        merge = this.value,
+                        reverse_key = this.name;
+
+                    while ((k = keys.pop()) !== undefined) {
+
+                        // Adjust reverse_key
+                        reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
+
+                        // Push
+                        if (k.match(patterns.push)) {
+                            merge = self.build([], self.push_counter(reverse_key), merge);
+                        }
+
+                        // Fixed
+                        else if (k.match(patterns.fixed)) {
+                            merge = self.build([], k, merge);
+                        }
+
+                        // Named
+                        else if (k.match(patterns.named)) {
+                            merge = self.build({}, k, merge);
+                        }
+                    }
+
+                    json = $.extend(true, json, merge);
+                });
+
+                return json;
+            };
+        })(jQuery);
+    </script>
+</body>
+</html>
